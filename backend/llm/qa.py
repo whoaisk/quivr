@@ -7,9 +7,10 @@ from langchain.chat_models.anthropic import ChatAnthropic
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import VertexAI
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.vectorstores import SupabaseVectorStore
 from llm import LANGUAGE_PROMPT
+from llm.LANGUAGE_PROMPT import CONDENSE_QUESTION_PROMPT, QA_PROMPT
 from models.chats import ChatMessage
 from supabase import Client, create_client
 
@@ -85,7 +86,7 @@ def get_qa_llm(chat_message: ChatMessage, user_id: str, user_openai_api_key: str
     
     vector_store = CustomSupabaseVectorStore(
         supabase_client, embeddings, table_name="vectors", user_id=user_id)
-    memory = ConversationBufferMemory(
+    memory = ConversationBufferWindowMemory(
         memory_key="chat_history", return_messages=True)
     
     ConversationalRetrievalChain.prompts = LANGUAGE_PROMPT
@@ -99,7 +100,8 @@ def get_qa_llm(chat_message: ChatMessage, user_id: str, user_openai_api_key: str
                 model_name=chat_message.model, openai_api_key=openai_api_key, 
                 temperature=chat_message.temperature, max_tokens=chat_message.max_tokens), 
                 vector_store.as_retriever(), memory=memory, verbose=True, 
-                max_tokens_limit=1024)
+                max_tokens_limit=1024,
+                combine_docs_chain_kwargs={'prompt': QA_PROMPT}, condense_question_prompt=CONDENSE_QUESTION_PROMPT)
     elif chat_message.model.startswith("vertex"):
         qa = ConversationalRetrievalChain.from_llm(
             ChatVertexAI(), vector_store.as_retriever(), memory=memory, verbose=False, max_tokens_limit=1024)

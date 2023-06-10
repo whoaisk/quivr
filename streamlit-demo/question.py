@@ -2,14 +2,14 @@ import anthropic
 import streamlit as st
 from streamlit.logger import get_logger
 from langchain.chains import ConversationalRetrievalChain
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatAnthropic
 from langchain.vectorstores import SupabaseVectorStore
 from stats import add_usage
 
-memory = ConversationBufferMemory(
-    memory_key="chat_history", return_messages=True)
+memory = ConversationBufferWindowMemory(
+    memory_key="chat_history", return_messages=True, k=3)
 openai_api_key = st.secrets.openai_api_key
 anthropic_api_key = st.secrets.anthropic_api_key
 logger = get_logger(__name__)

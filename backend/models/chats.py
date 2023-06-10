@@ -8,6 +8,6 @@ class ChatMessage(BaseModel):
     question: str
     # A list of tuples where each tuple is (speaker, text)
     history: List[Tuple[str, str]]
-    temperature: float = 0.6
+    temperature: float = 0.4
     max_tokens: int = 384
     use_summarization: bool = False
