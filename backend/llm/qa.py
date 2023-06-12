@@ -7,6 +7,7 @@ from langchain.chat_models.anthropic import ChatAnthropic
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import VertexAI
+from langchain.memory import ConversationBufferMemory
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.vectorstores import SupabaseVectorStore
 from llm import LANGUAGE_PROMPT
